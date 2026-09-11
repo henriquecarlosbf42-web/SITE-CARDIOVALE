@@ -44,7 +44,11 @@ export function Dock({ items }: { items: readonly DockItemData[] }) {
       className="mx-auto flex h-16 items-end gap-3 rounded-2xl border border-ink-100 bg-surface/85 px-4 pb-3 shadow-soft backdrop-blur"
     >
       {items.map((item) => {
-        const active = item.exact ? pathname === item.href : pathname.startsWith(item.href);
+        // pathname só reflete a rota nova depois que a navegação termina
+        // (dados carregados etc) — some tela de espera. tappedHref marca
+        // ativo na hora do clique, sem esperar isso, pra ficar responsivo.
+        const routeActive = item.exact ? pathname === item.href : pathname.startsWith(item.href);
+        const active = routeActive || tappedHref === item.href;
         return (
           <DockItem
             key={item.href}
