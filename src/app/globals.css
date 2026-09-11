@@ -94,3 +94,20 @@ body {
     animation: none;
   }
 }
+
+/* Fundo dos portais (paciente/médico/admin) — vertical no celular,
+   horizontal a partir de telas maiores. */
+.portal-bg {
+  background-image: url("/images/portal/fundo-mobile.webp");
+  background-size: cover;
+  background-position: top center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+@media (min-width: 1024px) {
+  .portal-bg {
+    background-image: url("/images/portal/fundo-desktop.webp");
+    background-position: center;
+  }
+}

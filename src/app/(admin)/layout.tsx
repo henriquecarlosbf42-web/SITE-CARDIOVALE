@@ -13,8 +13,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   if (!roleCanAccess("painel-admin", user.role)) redirect(HOME_BY_ROLE[user.role]);
 
   return (
-    <div className="min-h-screen bg-surface-soft">
-      <header className="border-b border-ink-100 bg-surface">
+    <div className="portal-bg min-h-screen">
+      <header className="border-b border-ink-100 bg-surface/85 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-6">
           <Logo height={32} />
           <div className="flex items-center gap-4">
