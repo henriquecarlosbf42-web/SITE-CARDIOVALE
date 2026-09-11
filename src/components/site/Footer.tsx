@@ -8,7 +8,7 @@ import { clinic } from "@/lib/data/clinic";
 
 export function Footer() {
   return (
-    <footer className="mt-24 border-t border-ink-100 bg-surface-soft">
+    <footer className="mt-24 border-t border-ink-100 bg-surface-soft pb-24 xl:pb-0">
       <Container className="grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-4">
         <div>
           <Logo height={40} />
