@@ -45,10 +45,11 @@ export function Dock({ items }: { items: readonly DockItemData[] }) {
     >
       {items.map((item) => {
         // pathname só reflete a rota nova depois que a navegação termina
-        // (dados carregados etc) — some tela de espera. tappedHref marca
-        // ativo na hora do clique, sem esperar isso, pra ficar responsivo.
+        // (dados carregados etc). Enquanto tem um toque recente pendente,
+        // só ELE conta como ativo — senão o item antigo (ainda baseado na
+        // rota real) fica vermelho junto por um instante.
         const routeActive = item.exact ? pathname === item.href : pathname.startsWith(item.href);
-        const active = routeActive || tappedHref === item.href;
+        const active = tappedHref ? tappedHref === item.href : routeActive;
         return (
           <DockItem
             key={item.href}
