@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -19,20 +19,23 @@ export interface DockItemData {
   exact?: boolean;
 }
 
-const HINT_DURATION_MS = 2600;
+const TAP_HINT_DURATION_MS = 2500;
 
 export function Dock({ items }: { items: readonly DockItemData[] }) {
   const mouseX = useMotionValue(Infinity);
   const pathname = usePathname();
 
-  // ao carregar, mostra o nome de cada seção por cima do ícone (útil no
-  // celular, onde não existe hover pra revelar a legenda) e some sozinho
-  // depois de alguns segundos, uma de cada vez.
-  const [showHints, setShowHints] = useState(true);
-  useEffect(() => {
-    const timeout = setTimeout(() => setShowHints(false), HINT_DURATION_MS);
-    return () => clearTimeout(timeout);
-  }, []);
+  // no celular não tem hover pra revelar o nome da seção — em vez disso,
+  // mostra o nome só quando o item é tocado/clicado, e some sozinho
+  // depois de alguns segundos.
+  const [tappedHref, setTappedHref] = useState<string | null>(null);
+
+  function handleTap(href: string) {
+    setTappedHref(href);
+    setTimeout(() => {
+      setTappedHref((current) => (current === href ? null : current));
+    }, TAP_HINT_DURATION_MS);
+  }
 
   return (
     <motion.div
@@ -40,7 +43,7 @@ export function Dock({ items }: { items: readonly DockItemData[] }) {
       onMouseLeave={() => mouseX.set(Infinity)}
       className="mx-auto flex h-16 items-end gap-3 rounded-2xl border border-ink-100 bg-surface/85 px-4 pb-3 shadow-soft backdrop-blur"
     >
-      {items.map((item, index) => {
+      {items.map((item) => {
         const active = item.exact ? pathname === item.href : pathname.startsWith(item.href);
         return (
           <DockItem
@@ -48,12 +51,12 @@ export function Dock({ items }: { items: readonly DockItemData[] }) {
             mouseX={mouseX}
             label={item.label}
             active={active}
-            index={index}
-            showHint={showHints}
+            showHint={tappedHref === item.href}
           >
             <Link
               href={item.href}
               aria-label={item.label}
+              onClick={() => handleTap(item.href)}
               className="flex h-full w-full grow items-center justify-center"
             >
               <item.icon className="h-5 w-5" strokeWidth={1.75} />
@@ -70,14 +73,12 @@ function DockItem({
   children,
   label,
   active,
-  index,
   showHint,
 }: {
   mouseX: MotionValue<number>;
   children: React.ReactNode;
   label: string;
   active: boolean;
-  index: number;
   showHint: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -101,7 +102,7 @@ function DockItem({
       <motion.span
         initial={false}
         animate={{ opacity: visible ? 1 : 0, y: visible ? 0 : 4 }}
-        transition={{ duration: 0.3, delay: hovered ? 0 : index * 0.06 }}
+        transition={{ duration: 0.25 }}
         className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-ink-900 px-2 py-1 text-xs text-white"
       >
         {label}
