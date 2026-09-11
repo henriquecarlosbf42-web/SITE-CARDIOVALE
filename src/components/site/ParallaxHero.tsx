@@ -68,14 +68,14 @@ export function ParallaxHero() {
       <motion.div
         aria-hidden
         style={{ y: yCouple }}
-        className="pointer-events-none absolute inset-y-0 right-0 hidden items-end justify-end lg:flex"
+        className="pointer-events-none absolute inset-y-0 right-0 flex items-end justify-end"
       >
         <Image
           src="/images/hero/casal.webp"
           alt=""
           width={992}
           height={745}
-          className="h-[82%] w-auto object-contain"
+          className="h-[36%] w-auto object-contain opacity-90 sm:h-[52%] sm:opacity-100 lg:h-[82%]"
         />
       </motion.div>
 

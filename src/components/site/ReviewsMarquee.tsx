@@ -57,7 +57,7 @@ function ReviewsColumn({
         initial={{ translateY: reverse ? "-50%" : "0%" }}
         animate={prefersReducedMotion ? undefined : { translateY: reverse ? "0%" : "-50%" }}
         transition={{ duration, repeat: Infinity, ease: "linear", repeatType: "loop" }}
-        className="flex flex-col gap-4"
+        className="flex flex-col items-center gap-4"
       >
         {[0, 1].map((rep) =>
           reviews.map((review, index) => <ReviewCard key={`${rep}-${index}`} review={review} />),
