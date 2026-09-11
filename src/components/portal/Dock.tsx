@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -19,9 +19,20 @@ export interface DockItemData {
   exact?: boolean;
 }
 
+const HINT_DURATION_MS = 2600;
+
 export function Dock({ items }: { items: readonly DockItemData[] }) {
   const mouseX = useMotionValue(Infinity);
   const pathname = usePathname();
+
+  // ao carregar, mostra o nome de cada seção por cima do ícone (útil no
+  // celular, onde não existe hover pra revelar a legenda) e some sozinho
+  // depois de alguns segundos, uma de cada vez.
+  const [showHints, setShowHints] = useState(true);
+  useEffect(() => {
+    const timeout = setTimeout(() => setShowHints(false), HINT_DURATION_MS);
+    return () => clearTimeout(timeout);
+  }, []);
 
   return (
     <motion.div
@@ -29,10 +40,17 @@ export function Dock({ items }: { items: readonly DockItemData[] }) {
       onMouseLeave={() => mouseX.set(Infinity)}
       className="mx-auto flex h-16 items-end gap-3 rounded-2xl border border-ink-100 bg-surface/85 px-4 pb-3 shadow-soft backdrop-blur"
     >
-      {items.map((item) => {
+      {items.map((item, index) => {
         const active = item.exact ? pathname === item.href : pathname.startsWith(item.href);
         return (
-          <DockItem key={item.href} mouseX={mouseX} label={item.label} active={active}>
+          <DockItem
+            key={item.href}
+            mouseX={mouseX}
+            label={item.label}
+            active={active}
+            index={index}
+            showHint={showHints}
+          >
             <Link
               href={item.href}
               aria-label={item.label}
@@ -52,13 +70,19 @@ function DockItem({
   children,
   label,
   active,
+  index,
+  showHint,
 }: {
   mouseX: MotionValue<number>;
   children: React.ReactNode;
   label: string;
   active: boolean;
+  index: number;
+  showHint: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
+  const [hovered, setHovered] = useState(false);
+  const visible = showHint || hovered;
 
   const distance = useTransform(mouseX, (val) => {
     const bounds = ref.current?.getBoundingClientRect() ?? { x: 0, width: 0 };
@@ -69,10 +93,19 @@ function DockItem({
   const width = useSpring(widthSync, { mass: 0.1, stiffness: 150, damping: 12 });
 
   return (
-    <div className="group relative">
-      <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-ink-900 px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100">
+    <div
+      className="group relative"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <motion.span
+        initial={false}
+        animate={{ opacity: visible ? 1 : 0, y: visible ? 0 : 4 }}
+        transition={{ duration: 0.3, delay: hovered ? 0 : index * 0.06 }}
+        className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-ink-900 px-2 py-1 text-xs text-white"
+      >
         {label}
-      </span>
+      </motion.span>
       <motion.div
         ref={ref}
         style={{ width }}
