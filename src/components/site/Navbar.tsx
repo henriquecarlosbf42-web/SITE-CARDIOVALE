@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Button } from "@/components/ui/Button";
 import { navLinks } from "@/components/site/nav-links";
 
 export function Navbar() {
@@ -18,15 +17,10 @@ export function Navbar() {
           ))}
         </nav>
 
-        <div className="flex flex-1 items-center justify-end gap-3 xl:flex-none xl:gap-4">
-          <Link href="/agendar-consulta">
-            <Button variant="primary" className="whitespace-nowrap px-4 py-2 text-sm xl:px-5 xl:py-2.5">
-              Agendar consulta
-            </Button>
-          </Link>
+        <div className="flex flex-1 items-center justify-end xl:flex-none">
           <Link
             href="/area-do-paciente"
-            className="whitespace-nowrap text-sm font-medium text-ink-900 hover:text-brand-deep"
+            className="whitespace-nowrap rounded-full bg-brand-deep px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand xl:px-5 xl:py-2.5"
           >
             Área do paciente
           </Link>
