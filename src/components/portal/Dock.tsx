@@ -19,7 +19,7 @@ export interface DockItemData {
   exact?: boolean;
 }
 
-const TAP_HINT_DURATION_MS = 2500;
+const TAP_HINT_DURATION_MS = 1500;
 
 export function Dock({ items }: { items: readonly DockItemData[] }) {
   const mouseX = useMotionValue(Infinity);
@@ -96,8 +96,12 @@ function DockItem({
   return (
     <div
       className="group relative"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      onPointerEnter={(event) => {
+        if (event.pointerType === "mouse") setHovered(true);
+      }}
+      onPointerLeave={(event) => {
+        if (event.pointerType === "mouse") setHovered(false);
+      }}
     >
       <motion.span
         initial={false}
