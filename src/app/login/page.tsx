@@ -17,7 +17,7 @@ export default async function LoginPage({
   const cadastroHref = redirect ? `/cadastro?redirect=${encodeURIComponent(redirect)}` : "/cadastro";
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-surface-soft px-6 py-16">
+    <main className="portal-bg flex min-h-screen items-center justify-center px-6 py-16">
       <div className="w-full max-w-sm rounded-card border border-ink-100 bg-surface p-8 shadow-soft">
         <div className="flex justify-center">
           <Logo height={36} />
