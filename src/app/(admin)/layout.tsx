@@ -4,6 +4,7 @@ import { roleCanAccess, HOME_BY_ROLE } from "@/lib/permissions/roles";
 import { Logo } from "@/components/site/Logo";
 import { signOut } from "@/app/login/actions";
 import { firstName } from "@/lib/format";
+import { AdminDock } from "./AdminDock";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const user = await getCurrentUser();
@@ -26,7 +27,12 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           </div>
         </div>
       </header>
-      <main className="mx-auto max-w-5xl px-6 py-10">{children}</main>
+
+      <main className="mx-auto max-w-5xl px-6 py-10 pb-28">{children}</main>
+
+      <div className="fixed inset-x-0 bottom-6 z-40 flex justify-center px-4">
+        <AdminDock />
+      </div>
     </div>
   );
 }
