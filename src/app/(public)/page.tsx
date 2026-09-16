@@ -8,6 +8,7 @@ import { InsuranceSearch } from "@/components/site/InsuranceSearch";
 import { InsuranceMarquee } from "@/components/site/InsuranceMarquee";
 import { ServicesToggle } from "@/components/site/ServicesToggle";
 import { ReviewsSection } from "@/components/site/ReviewsSection";
+import { getPublicExams } from "@/lib/data/exams";
 
 const trustPoints = [
   {
@@ -29,7 +30,9 @@ const trustPoints = [
   },
 ];
 
-export default function Home() {
+export default async function Home() {
+  const exams = await getPublicExams();
+
   return (
     <>
       <ParallaxHero />
@@ -65,7 +68,7 @@ export default function Home() {
 
       <section className="py-20">
         <Container>
-          <ServicesToggle />
+          <ServicesToggle exams={exams} />
         </Container>
       </section>
 

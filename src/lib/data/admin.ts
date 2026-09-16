@@ -100,6 +100,12 @@ export async function getAllExams(): Promise<Exam[]> {
   return data ?? [];
 }
 
+export async function getExamByIdAdmin(id: string): Promise<Exam | null> {
+  const supabase = await createClient();
+  const { data } = await supabase.from("exams").select("*").eq("id", id).maybeSingle();
+  return data;
+}
+
 export async function getAllInsurancePlans(): Promise<InsurancePlan[]> {
   const supabase = await createClient();
   const { data } = await supabase.from("insurance_plans").select("*").order("name");

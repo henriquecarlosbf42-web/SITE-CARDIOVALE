@@ -5,15 +5,8 @@ import { Activity, Stethoscope } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { CardSliderItem } from "@/components/site/CardSlider";
 import { CardGrid } from "@/components/site/CardGrid";
-import { exams } from "@/lib/data/exams";
+import type { PublicExam } from "@/lib/data/exams";
 import { specialties } from "@/lib/data/specialties";
-
-const examItems: CardSliderItem[] = exams.map((exam) => ({
-  key: exam.slug,
-  icon: Activity,
-  title: exam.name,
-  description: exam.description,
-}));
 
 const consultationItems: CardSliderItem[] = specialties.map((specialty) => ({
   key: specialty.name,
@@ -22,12 +15,19 @@ const consultationItems: CardSliderItem[] = specialties.map((specialty) => ({
   description: specialty.description,
 }));
 
-const options = [
-  { id: "exames", label: "Exames cardiológicos", icon: Activity, items: examItems },
-  { id: "consultas", label: "Consulta com cardiologista", icon: Stethoscope, items: consultationItems },
-] as const;
+export function ServicesToggle({ exams }: { exams: PublicExam[] }) {
+  const examItems: CardSliderItem[] = exams.map((exam) => ({
+    key: exam.slug,
+    icon: Activity,
+    title: exam.name,
+    description: exam.description ?? exam.summary ?? "",
+  }));
 
-export function ServicesToggle() {
+  const options = [
+    { id: "exames", label: "Exames cardiológicos", icon: Activity, items: examItems },
+    { id: "consultas", label: "Consulta com cardiologista", icon: Stethoscope, items: consultationItems },
+  ] as const;
+
   const [active, setActive] = useState<(typeof options)[number]["id"]>("exames");
   const current = options.find((option) => option.id === active)!;
 
