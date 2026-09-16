@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import { MessageCircle } from "lucide-react";
 import { PageHero } from "@/components/site/PageHero";
 import { Container } from "@/components/site/Container";
+import { Button } from "@/components/ui/Button";
 import { clinic } from "@/lib/data/clinic";
 import { doctors } from "@/lib/data/doctors";
 
@@ -59,6 +61,18 @@ export default function MedicosPage() {
                   Formação
                 </p>
                 <p className="mt-3 text-sm leading-relaxed text-ink-600">{doctor.bio}</p>
+
+                <a
+                  href={`https://wa.me/${doctor.whatsapp}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-6 block"
+                >
+                  <Button variant="secondary" className="w-full">
+                    <MessageCircle className="h-4 w-4" strokeWidth={1.75} />
+                    Falar com a secretária
+                  </Button>
+                </a>
               </div>
             </div>
           ))}

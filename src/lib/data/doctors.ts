@@ -3,6 +3,7 @@ export const doctors = [
     name: "Dr. João Manoel Theotonio dos Santos",
     photo: "dr-joao-manoel.avif",
     crm: "CRM 54.421 SP",
+    whatsapp: "5512997034303",
     qualifications: [
       { specialty: "Cardiologia", rqe: "RQE 18934" },
       { specialty: "Ecocardiografia", rqe: "RQE 189341" },
@@ -16,6 +17,7 @@ export const doctors = [
     name: "Dr. Victor Machado",
     photo: "dr-vitor-machado.avif",
     crm: "CRM 198310",
+    whatsapp: "5512997831574",
     qualifications: [
       { specialty: "Cardiologia", rqe: "RQE 127932" },
       { specialty: "Clínica Médica", rqe: "RQE 100517" },

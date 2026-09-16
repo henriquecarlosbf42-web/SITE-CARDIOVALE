@@ -23,6 +23,8 @@ export const clinic = {
   phoneHref: "tel:+551239434303",
   whatsapp: "(12) 99604-4303",
   whatsappHref: "https://wa.me/5512996044303",
+  examsWhatsapp: "(12) 3943-4303",
+  examsWhatsappHref: "https://wa.me/551239434303",
   hours: [
     { days: "Segunda a sexta", time: "8h às 18h" },
     { days: "Sábado", time: "9h às 10h30 (retirada de aparelho)" },
