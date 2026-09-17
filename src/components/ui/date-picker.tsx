@@ -82,6 +82,11 @@ export function DatePickerField({
   const daysInMonth = getDaysInMonth(currentYear, currentMonth);
   const firstDayIndex = getFirstDayOfMonth(currentYear, currentMonth);
 
+  // do ano seguinte até 110 anos atrás — cobre data de nascimento sem
+  // precisar clicar mês a mês pra voltar décadas.
+  const todayYear = new Date().getFullYear();
+  const yearOptions = Array.from({ length: 112 }, (_, index) => todayYear + 1 - index);
+
   function prevMonth() {
     if (currentMonth === 0) {
       setCurrentMonth(11);
@@ -207,22 +212,18 @@ export function DatePickerField({
 
               {showMonthPicker && (
                 <div className="absolute inset-0 z-10 flex flex-col rounded-2xl bg-surface/95 p-3 backdrop-blur">
-                  <div className="mb-3 flex items-center justify-between border-b border-ink-100 pb-2">
-                    <button
-                      type="button"
-                      onClick={() => setCurrentYear((year) => year - 1)}
-                      className="rounded-full p-1.5 text-brand-deep transition-colors hover:bg-brand-light"
+                  <div className="mb-3 border-b border-ink-100 pb-2">
+                    <select
+                      value={currentYear}
+                      onChange={(event) => setCurrentYear(Number(event.target.value))}
+                      className="w-full rounded-lg border border-ink-100 bg-white px-2 py-1.5 text-center text-base font-bold text-ink-900 outline-none focus:border-brand"
                     >
-                      <ChevronLeft className="h-4 w-4" strokeWidth={2.5} />
-                    </button>
-                    <span className="text-base font-bold text-ink-900">{currentYear}</span>
-                    <button
-                      type="button"
-                      onClick={() => setCurrentYear((year) => year + 1)}
-                      className="rounded-full p-1.5 text-brand-deep transition-colors hover:bg-brand-light"
-                    >
-                      <ChevronRight className="h-4 w-4" strokeWidth={2.5} />
-                    </button>
+                      {yearOptions.map((year) => (
+                        <option key={year} value={year}>
+                          {year}
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
                   <div className="grid flex-1 grid-cols-3 gap-1.5 overflow-y-auto">
