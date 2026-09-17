@@ -1,5 +1,8 @@
 export const clinic = {
   name: "CardioVale",
+  // troca pro domínio próprio assim que ele existir — usado só pra montar
+  // links em mensagens (WhatsApp etc), não afeta rotas internas do site
+  siteUrl: "https://cardiovale-site-carlos-henrique7.vercel.app",
   legalName: "Instituto de Cardiologia do Vale do Paraíba",
   kicker: "Mais vida para você",
   headline: "Há 32 anos a melhor clínica para o seu coração em São José dos Campos.",

@@ -29,6 +29,7 @@ import { PublishButton } from "./PublishButton";
 import { UploadDocumentButton } from "./UploadDocumentButton";
 import { ExamResultMenu } from "./ExamResultMenu";
 import { PrescriptionMenu } from "./PrescriptionMenu";
+import { WhatsAppExamButton } from "./WhatsAppExamButton";
 import { AppointmentMenu } from "@/components/portal/AppointmentMenu";
 
 function examIcon(examName?: string) {
@@ -183,6 +184,14 @@ export default async function PatientDetailPage({ params }: { params: Promise<{ 
                   </div>
 
                   <div className="flex shrink-0 items-center gap-2">
+                    {result.status === "PUBLICADO" && (
+                      <WhatsAppExamButton
+                        phone={patient.phone}
+                        patientName={patient.full_name}
+                        examName={examName ?? "exame"}
+                        examDate={formatDate(result.exam_date)}
+                      />
+                    )}
                     <UploadDocumentButton examResultId={result.id} patientId={patient.id} />
                     <ExamResultMenu examResultId={result.id} patientId={patient.id} />
                   </div>

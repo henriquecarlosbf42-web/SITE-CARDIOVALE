@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { notifyExamResultPublished } from "@/lib/notifications/notify-exam-published";
 
 export interface ExamResultFormState {
   error?: string;
@@ -78,6 +79,10 @@ export async function createExamResult(
     }
   }
 
+  if (publish) {
+    await notifyExamResultPublished(examResult.id);
+  }
+
   revalidatePath(`/medico/pacientes/${patientId}`);
   redirect(`/medico/pacientes/${patientId}`);
 }
@@ -92,6 +97,8 @@ export async function publishExamResult(examResultId: string, patientId: string)
     .update({ status: "PUBLICADO", released_at: new Date().toISOString() })
     .eq("id", examResultId)
     .eq("doctor_id", doctorId);
+
+  await notifyExamResultPublished(examResultId);
 
   revalidatePath(`/medico/pacientes/${patientId}`);
 }

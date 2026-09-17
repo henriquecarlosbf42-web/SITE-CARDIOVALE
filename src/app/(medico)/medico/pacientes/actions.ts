@@ -6,7 +6,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 
 export interface CreatePatientFormState {
   error?: string;
-  success?: { cpf: string; password: string; patientId: string };
+  success?: { cpf: string; password: string; patientId: string; fullName: string; phone: string | null };
   alreadyExists?: { patientId: string; fullName: string };
 }
 
@@ -42,6 +42,7 @@ export async function createPatientByDoctor(
   const fullName = String(formData.get("full_name") ?? "").trim();
   const cpf = String(formData.get("cpf") ?? "").replace(/\D/g, "");
   const birthDate = String(formData.get("birth_date") ?? "");
+  const phone = String(formData.get("phone") ?? "").trim() || null;
 
   if (!fullName || cpf.length !== 11 || !birthDate) {
     return { error: "Preenche nome, CPF (11 dígitos) e data de nascimento." };
@@ -112,14 +113,20 @@ export async function createPatientByDoctor(
   if (existing) {
     const { error: updateError } = await admin
       .from("patients")
-      .update({ user_id: created.user.id, full_name: fullName, birth_date: birthDate, email: syntheticEmail })
+      .update({
+        user_id: created.user.id,
+        full_name: fullName,
+        birth_date: birthDate,
+        email: syntheticEmail,
+        phone: phone ?? undefined,
+      })
       .eq("id", existing.id);
     if (updateError) return { error: "Conta criada, mas não deu pra vincular o cadastro já existente." };
     patientId = existing.id;
   } else {
     const { data: patient, error: insertError } = await admin
       .from("patients")
-      .insert({ user_id: created.user.id, full_name: fullName, cpf, birth_date: birthDate, email: syntheticEmail })
+      .insert({ user_id: created.user.id, full_name: fullName, cpf, birth_date: birthDate, email: syntheticEmail, phone })
       .select("id")
       .single();
     if (insertError || !patient) return { error: "Conta criada, mas não deu pra salvar o cadastro de paciente." };
@@ -139,7 +146,7 @@ export async function createPatientByDoctor(
 
   revalidatePath("/medico/pacientes");
 
-  return { success: { cpf, password, patientId } };
+  return { success: { cpf, password, patientId, fullName, phone } };
 }
 
 /** Vincula um paciente já cadastrado (mas sem médico ainda) a esse

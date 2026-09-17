@@ -11,6 +11,7 @@ import {
   getPatientRecord,
 } from "@/lib/data/patient-portal";
 import { formatDateTime, formatDate, findNextByDate, firstName } from "@/lib/format";
+import { EnableNotificationsButton } from "./EnableNotificationsButton";
 
 export default async function PortalDashboardPage() {
   const user = await getCurrentUser();
@@ -82,6 +83,7 @@ export default async function PortalDashboardPage() {
           ) : (
             <p className="mt-3 text-sm text-ink-600">Nenhuma notificação nova.</p>
           )}
+          <EnableNotificationsButton />
         </div>
       </div>
 
