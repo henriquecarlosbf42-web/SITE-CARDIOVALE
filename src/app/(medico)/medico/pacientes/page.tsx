@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { Plus } from "lucide-react";
 import { getDoctorPatients, getDoctorRecord } from "@/lib/data/doctor-portal";
 import { PatientsList } from "./PatientsList";
 
@@ -17,6 +19,16 @@ export default async function PacientesPage() {
 
       <div className="mt-6">
         <PatientsList patients={patients.map((patient) => ({ id: patient.id, full_name: patient.full_name }))} />
+      </div>
+
+      <div className="mt-4 flex justify-center">
+        <Link
+          href="/medico/pacientes/novo"
+          className="flex cursor-pointer items-center gap-2 rounded-full bg-brand-deep px-5 py-2.5 text-sm font-medium text-white transition-transform duration-200 hover:-translate-y-1 hover:bg-brand"
+        >
+          <Plus className="size-4" strokeWidth={2} />
+          Cadastrar Paciente
+        </Link>
       </div>
     </div>
   );

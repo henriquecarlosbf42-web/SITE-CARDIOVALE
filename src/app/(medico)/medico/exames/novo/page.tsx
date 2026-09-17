@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { getDoctorPatients, getDoctorRecord } from "@/lib/data/doctor-portal";
 import { createClient } from "@/lib/supabase/server";
 import { ExamResultForm } from "./ExamResultForm";
@@ -30,6 +31,13 @@ export default async function NovoResultadoPage({
       <div className="mt-6 rounded-card border border-ink-100 bg-surface p-6 shadow-soft">
         <ExamResultForm patients={patients} exams={exams ?? []} defaultPatientId={paciente} />
       </div>
+
+      <p className="mt-4 text-center text-sm text-ink-600">
+        Paciente não está na lista?{" "}
+        <Link href="/medico/pacientes/novo" className="font-medium text-brand-deep hover:underline">
+          Cadastrar novo paciente
+        </Link>
+      </p>
     </div>
   );
 }
