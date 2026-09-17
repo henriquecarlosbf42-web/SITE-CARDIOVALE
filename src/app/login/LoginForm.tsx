@@ -13,17 +13,19 @@ export function LoginForm({ redirectTo }: { redirectTo?: string }) {
       {redirectTo && <input type="hidden" name="redirect" value={redirectTo} />}
 
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-ink-900">
-          E-mail
+        <label htmlFor="identifier" className="block text-sm font-medium text-ink-900">
+          CPF
         </label>
         <input
-          id="email"
-          name="email"
-          type="email"
-          autoComplete="email"
+          id="identifier"
+          name="identifier"
+          type="text"
+          autoComplete="username"
+          placeholder="000.000.000-00"
           required
           className="mt-1.5 w-full rounded-lg border border-ink-100 px-4 py-2.5 text-sm text-ink-900 outline-none focus:border-brand"
         />
+        <p className="mt-1.5 text-xs text-ink-600">Médico ou administrativo? Entra com o e-mail cadastrado.</p>
       </div>
 
       <div>

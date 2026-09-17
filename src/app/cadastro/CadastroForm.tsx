@@ -74,6 +74,7 @@ export function CadastroForm({ redirectTo }: { redirectTo: string }) {
             required
             className="mt-1.5 w-full rounded-lg border border-ink-100 px-4 py-2.5 text-sm text-ink-900 outline-none focus:border-brand"
           />
+          <p className="mt-1.5 text-xs text-ink-600">Você vai usar o CPF pra entrar depois.</p>
         </div>
 
         <DatePickerField name="birth_date" label="Nascimento" required />

@@ -9,19 +9,33 @@ export interface SignInState {
 }
 
 export async function signIn(_prevState: SignInState, formData: FormData): Promise<SignInState> {
-  const email = String(formData.get("email") ?? "").trim();
+  const identifier = String(formData.get("identifier") ?? "").trim();
   const password = String(formData.get("password") ?? "");
 
-  if (!email || !password) {
-    return { error: "Preenche e-mail e senha." };
+  if (!identifier || !password) {
+    return { error: "Preenche CPF (ou e-mail) e senha." };
   }
 
   const supabase = await createClient();
 
+  // paciente entra com CPF; médico/administrativo continuam com e-mail.
+  // um CPF (11 dígitos) é resolvido pro e-mail vinculado antes de
+  // autenticar, já que o Supabase Auth só aceita e-mail/senha.
+  const digits = identifier.replace(/\D/g, "");
+  let email = identifier;
+
+  if (digits.length === 11) {
+    const { data: resolvedEmail } = await supabase.rpc("resolve_patient_login_email", { p_cpf: digits });
+    if (!resolvedEmail) {
+      return { error: "CPF ou senha incorretos." };
+    }
+    email = resolvedEmail;
+  }
+
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error || !data.user) {
-    return { error: "E-mail ou senha incorretos." };
+    return { error: "CPF/e-mail ou senha incorretos." };
   }
 
   const { data: profile } = await supabase

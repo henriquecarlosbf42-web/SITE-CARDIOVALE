@@ -719,6 +719,10 @@ export interface Database {
         Args: { p_cpf: string; p_birth_date: string };
         Returns: boolean;
       };
+      resolve_patient_login_email: {
+        Args: { p_cpf: string };
+        Returns: string | null;
+      };
     };
     Enums: {
       appointment_type: "CONSULTA" | "RETORNO" | "EXAME";
