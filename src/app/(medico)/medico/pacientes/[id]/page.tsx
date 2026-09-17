@@ -30,6 +30,7 @@ import { UploadDocumentButton } from "./UploadDocumentButton";
 import { ExamResultMenu } from "./ExamResultMenu";
 import { PrescriptionMenu } from "./PrescriptionMenu";
 import { WhatsAppExamButton } from "./WhatsAppExamButton";
+import { PatientPhoneField } from "./PatientPhoneField";
 import { AppointmentMenu } from "@/components/portal/AppointmentMenu";
 
 function examIcon(examName?: string) {
@@ -74,10 +75,10 @@ export default async function PatientDetailPage({ params }: { params: Promise<{ 
     <div className="space-y-8">
       <div className="rounded-card border border-ink-100 bg-surface p-6 text-center shadow-soft">
         <h1 className="text-2xl font-semibold text-ink-900">{patient.full_name}</h1>
-        <p className="mt-1 text-sm text-ink-600">
-          {patient.phone && <>{patient.phone} · </>}
-          {patient.birth_date && `Nascimento: ${formatDate(patient.birth_date)}`}
-        </p>
+        <div className="mt-1 flex flex-wrap items-center justify-center gap-x-1.5 text-sm text-ink-600">
+          <PatientPhoneField patientId={patient.id} phone={patient.phone} />
+          {patient.birth_date && <span>· Nascimento: {formatDate(patient.birth_date)}</span>}
+        </div>
       </div>
 
       <section>

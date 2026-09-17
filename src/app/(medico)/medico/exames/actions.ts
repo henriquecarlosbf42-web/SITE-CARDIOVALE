@@ -7,6 +7,13 @@ import { notifyExamResultPublished } from "@/lib/notifications/notify-exam-publi
 
 export interface ExamResultFormState {
   error?: string;
+  success?: {
+    patientId: string;
+    patientName: string;
+    phone: string | null;
+    examName: string;
+    examDate: string;
+  };
 }
 
 async function requireDoctorId(supabase: Awaited<ReturnType<typeof createClient>>) {
@@ -79,11 +86,27 @@ export async function createExamResult(
     }
   }
 
+  revalidatePath(`/medico/pacientes/${patientId}`);
+
   if (publish) {
     await notifyExamResultPublished(examResult.id);
+
+    const [{ data: patient }, { data: exam }] = await Promise.all([
+      supabase.from("patients").select("full_name, phone").eq("id", patientId).maybeSingle(),
+      supabase.from("exams").select("name").eq("id", examId).maybeSingle(),
+    ]);
+
+    return {
+      success: {
+        patientId,
+        patientName: patient?.full_name ?? "",
+        phone: patient?.phone ?? null,
+        examName: exam?.name ?? "exame",
+        examDate,
+      },
+    };
   }
 
-  revalidatePath(`/medico/pacientes/${patientId}`);
   redirect(`/medico/pacientes/${patientId}`);
 }
 

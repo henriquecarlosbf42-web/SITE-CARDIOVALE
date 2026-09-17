@@ -1,7 +1,12 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState } from "react";
+import { MessageCircle } from "lucide-react";
 import { DatePickerField } from "@/components/ui/date-picker";
+import { formatDate, firstName } from "@/lib/format";
+import { whatsappHref } from "@/lib/whatsapp";
+import { clinic } from "@/lib/data/clinic";
 import type { PatientSearchResult } from "@/lib/data/doctor-portal";
 import { createExamResult, type ExamResultFormState } from "../actions";
 import { ExamFilesDropzone } from "./ExamFilesDropzone";
@@ -18,6 +23,51 @@ interface Props {
 
 export function ExamResultForm({ patients, allPatients, exams, defaultPatientId }: Props) {
   const [state, formAction, pending] = useActionState(createExamResult, initialState);
+
+  if (state.success) {
+    const { patientId, patientName, phone, examName, examDate } = state.success;
+    const message = `Olá ${firstName(patientName)}, seu resultado de ${examName} (${formatDate(examDate)}) já está disponível no portal da CardioVale. Acesse: ${clinic.siteUrl}/login`;
+    const href = phone ? whatsappHref(phone, message) : null;
+
+    return (
+      <div className="space-y-4">
+        <p className="text-sm text-ink-900">
+          Resultado publicado! O paciente já pode ver no portal dele.
+        </p>
+
+        {href ? (
+          <a
+            href={href}
+            target="_blank"
+            rel="noreferrer"
+            className="flex w-full items-center justify-center gap-2 rounded-full bg-brand-deep px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-brand"
+          >
+            <MessageCircle className="size-4" strokeWidth={2} />
+            Avisar no WhatsApp
+          </a>
+        ) : (
+          <p className="text-center text-xs text-ink-600">
+            Esse paciente não tem telefone cadastrado — adiciona na ficha dele pra poder avisar por WhatsApp.
+          </p>
+        )}
+
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <Link
+            href={`/medico/pacientes/${patientId}`}
+            className="flex-1 rounded-full border border-ink-100 bg-white px-6 py-3 text-center text-sm font-medium text-ink-900 transition-colors hover:bg-surface-soft"
+          >
+            Ver ficha do paciente
+          </Link>
+          <Link
+            href={`/medico/exames/novo?paciente=${patientId}`}
+            className="flex-1 rounded-full border border-ink-100 bg-white px-6 py-3 text-center text-sm font-medium text-ink-900 transition-colors hover:bg-surface-soft"
+          >
+            Lançar outro exame
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <form action={formAction} className="space-y-5">

@@ -186,3 +186,37 @@ export async function linkPatientToDoctor(patientId: string): Promise<{ error?: 
   revalidatePath("/medico/exames/novo");
   return {};
 }
+
+/** Telefone é o que habilita o botão de WhatsApp — o médico costuma ser
+ * quem tem esse dado em mãos, então deixa editar direto na ficha em vez
+ * de depender do painel administrativo. */
+export async function updatePatientPhone(patientId: string, phone: string): Promise<{ error?: string }> {
+  const doctorId = await requireDoctorSession();
+  if (!doctorId) return { error: "Sem permissão." };
+
+  const cleaned = phone.trim();
+  if (!cleaned) return { error: "Informe um telefone." };
+
+  let admin;
+  try {
+    admin = createAdminClient();
+  } catch {
+    return { error: "SUPABASE_SERVICE_ROLE_KEY não configurada no servidor — fala com o desenvolvedor." };
+  }
+
+  const { data: otherAppt } = await admin
+    .from("appointments")
+    .select("id")
+    .eq("patient_id", patientId)
+    .neq("doctor_id", doctorId)
+    .limit(1)
+    .maybeSingle();
+
+  if (otherAppt) return { error: "Esse paciente está vinculado a outro médico." };
+
+  const { error } = await admin.from("patients").update({ phone: cleaned }).eq("id", patientId);
+  if (error) return { error: "Não deu pra salvar o telefone. Tenta de novo." };
+
+  revalidatePath(`/medico/pacientes/${patientId}`);
+  return {};
+}
