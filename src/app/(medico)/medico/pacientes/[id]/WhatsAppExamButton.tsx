@@ -1,9 +1,7 @@
 "use client";
 
 import { MessageCircle } from "lucide-react";
-import { clinic } from "@/lib/data/clinic";
-import { firstName } from "@/lib/format";
-import { whatsappHref } from "@/lib/whatsapp";
+import { examReadyMessage, whatsappHref } from "@/lib/whatsapp";
 
 interface Props {
   phone: string | null;
@@ -13,7 +11,7 @@ interface Props {
 }
 
 export function WhatsAppExamButton({ phone, patientName, examName, examDate }: Props) {
-  const message = `Olá ${firstName(patientName)}, seu resultado de ${examName} (${examDate}) já está disponível no portal da CardioVale. Acesse: ${clinic.siteUrl}/login`;
+  const message = examReadyMessage({ patientName, examName, examDate });
   const href = phone ? whatsappHref(phone, message) : null;
 
   if (!href) {

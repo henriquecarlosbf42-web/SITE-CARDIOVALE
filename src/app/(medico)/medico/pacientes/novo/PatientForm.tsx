@@ -4,9 +4,7 @@ import Link from "next/link";
 import { useActionState } from "react";
 import { MessageCircle } from "lucide-react";
 import { DatePickerField } from "@/components/ui/date-picker";
-import { clinic } from "@/lib/data/clinic";
-import { firstName } from "@/lib/format";
-import { whatsappHref } from "@/lib/whatsapp";
+import { accessCredentialsMessage, whatsappHref } from "@/lib/whatsapp";
 import { createPatientByDoctor, type CreatePatientFormState } from "../actions";
 
 const initialState: CreatePatientFormState = {};
@@ -40,7 +38,11 @@ export function PatientForm() {
   }
 
   if (state.success) {
-    const credentialsMessage = `Olá ${firstName(state.success.fullName)}, seu acesso ao portal da CardioVale foi criado.\n\nCPF (login): ${state.success.cpf}\nSenha: ${state.success.password}\n\nAcesse em: ${clinic.siteUrl}/login\n\nNo primeiro acesso você vai precisar criar uma senha só sua.`;
+    const credentialsMessage = accessCredentialsMessage({
+      patientName: state.success.fullName,
+      cpf: state.success.cpf,
+      password: state.success.password,
+    });
     const credentialsHref = state.success.phone ? whatsappHref(state.success.phone, credentialsMessage) : null;
 
     return (

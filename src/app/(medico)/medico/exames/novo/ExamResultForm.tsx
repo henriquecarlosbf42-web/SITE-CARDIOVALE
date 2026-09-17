@@ -4,9 +4,8 @@ import Link from "next/link";
 import { useActionState } from "react";
 import { MessageCircle } from "lucide-react";
 import { DatePickerField } from "@/components/ui/date-picker";
-import { formatDate, firstName } from "@/lib/format";
-import { whatsappHref } from "@/lib/whatsapp";
-import { clinic } from "@/lib/data/clinic";
+import { formatDate } from "@/lib/format";
+import { examReadyMessage, whatsappHref } from "@/lib/whatsapp";
 import type { PatientSearchResult } from "@/lib/data/doctor-portal";
 import { createExamResult, type ExamResultFormState } from "../actions";
 import { ExamFilesDropzone } from "./ExamFilesDropzone";
@@ -26,7 +25,7 @@ export function ExamResultForm({ patients, allPatients, exams, defaultPatientId 
 
   if (state.success) {
     const { patientId, patientName, phone, examName, examDate } = state.success;
-    const message = `Olá ${firstName(patientName)}, seu resultado de ${examName} (${formatDate(examDate)}) já está disponível no portal da CardioVale. Acesse: ${clinic.siteUrl}/login`;
+    const message = examReadyMessage({ patientName, examName, examDate: formatDate(examDate) });
     const href = phone ? whatsappHref(phone, message) : null;
 
     return (
