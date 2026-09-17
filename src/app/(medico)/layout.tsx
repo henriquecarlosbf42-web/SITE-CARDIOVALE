@@ -11,6 +11,7 @@ export default async function MedicoLayout({ children }: { children: React.React
 
   if (!user) redirect("/login");
   if (!roleCanAccess("portal-medico", user.role)) redirect(HOME_BY_ROLE[user.role]);
+  if (user.mustChangePassword) redirect("/trocar-senha");
 
   return (
     <div className="portal-bg min-h-screen">

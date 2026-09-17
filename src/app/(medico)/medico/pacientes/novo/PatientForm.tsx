@@ -40,7 +40,8 @@ export function PatientForm() {
       <div className="space-y-4">
         <p className="text-sm text-ink-900">
           Cadastro criado! Esses são os dados de acesso — a senha padrão é a data de nascimento (dia, mês e ano)
-          seguida dos 2 últimos números do CPF, sempre dá pra reconstruir com a ficha do paciente.
+          seguida dos 2 últimos números do CPF, sempre dá pra reconstruir com a ficha do paciente. No primeiro
+          acesso, o sistema vai pedir pra ele trocar por uma senha própria.
         </p>
         <div className="space-y-2 rounded-lg border border-ink-100 bg-surface-soft p-4 text-sm">
           <p className="text-ink-900">

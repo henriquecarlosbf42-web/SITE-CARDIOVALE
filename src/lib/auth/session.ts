@@ -6,6 +6,7 @@ export interface CurrentUser {
   email: string | null;
   role: Role;
   fullName: string;
+  mustChangePassword: boolean;
 }
 
 /**
@@ -24,7 +25,7 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
 
   const { data: profile } = await supabase
     .from("users")
-    .select("role, full_name")
+    .select("role, full_name, must_change_password")
     .eq("id", user.id)
     .single();
 
@@ -35,5 +36,6 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
     email: user.email ?? null,
     role: profile.role as Role,
     fullName: profile.full_name,
+    mustChangePassword: profile.must_change_password,
   };
 }

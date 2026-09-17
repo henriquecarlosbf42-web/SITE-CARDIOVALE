@@ -11,6 +11,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   if (!user) redirect("/login");
   if (!roleCanAccess("painel-admin", user.role)) redirect(HOME_BY_ROLE[user.role]);
+  if (user.mustChangePassword) redirect("/trocar-senha");
 
   return (
     <div className="portal-bg min-h-screen">

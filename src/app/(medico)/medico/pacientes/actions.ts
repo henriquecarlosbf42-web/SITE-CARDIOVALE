@@ -103,6 +103,10 @@ export async function createPatientByDoctor(
     return { error: "Não deu pra criar o cadastro. Tenta de novo." };
   }
 
+  // senha padrão (nascimento + CPF) é previsível demais pra ficar valendo
+  // — força trocar por uma própria no primeiro acesso.
+  await admin.from("users").update({ must_change_password: true }).eq("id", created.user.id);
+
   let patientId: string;
 
   if (existing) {
