@@ -7,6 +7,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 export interface CreatePatientFormState {
   error?: string;
   success?: { cpf: string; password: string; patientId: string };
+  alreadyExists?: { patientId: string; fullName: string };
 }
 
 async function requireDoctorSession() {
@@ -55,12 +56,23 @@ export async function createPatientByDoctor(
 
   const { data: existing } = await admin
     .from("patients")
-    .select("id, user_id")
+    .select("id, user_id, full_name")
     .eq("cpf", cpf)
     .maybeSingle();
 
   if (existing?.user_id) {
-    return { error: "Já existe um cadastro com login pra esse CPF." };
+    // já tem conta (feita por outro médico, pela recepção etc) — só
+    // garante que esse médico também enxerga o paciente e deixa ele
+    // decidir se quer ir direto pra ficha, em vez de travar num erro.
+    await admin.from("appointments").insert({
+      patient_id: existing.id,
+      doctor_id: doctorId,
+      type: "CONSULTA",
+      status_code: "ATENDIDA",
+      scheduled_at: new Date().toISOString(),
+    });
+    revalidatePath("/medico/pacientes");
+    return { alreadyExists: { patientId: existing.id, fullName: existing.full_name } };
   }
 
   const password = defaultPassword(birthDate, cpf);

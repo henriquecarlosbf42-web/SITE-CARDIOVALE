@@ -10,6 +10,31 @@ const initialState: CreatePatientFormState = {};
 export function PatientForm() {
   const [state, formAction, pending] = useActionState(createPatientByDoctor, initialState);
 
+  if (state.alreadyExists) {
+    return (
+      <div className="space-y-4">
+        <p className="text-sm text-ink-900">
+          Esse CPF já tem cadastro: <span className="font-medium">{state.alreadyExists.fullName}</span>. Deseja
+          acessar esse paciente?
+        </p>
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <Link
+            href={`/medico/exames/novo?paciente=${state.alreadyExists.patientId}`}
+            className="flex-1 rounded-full bg-brand-deep px-6 py-3 text-center text-sm font-medium text-white transition-colors hover:bg-brand"
+          >
+            Lançar resultado de exame
+          </Link>
+          <Link
+            href={`/medico/pacientes/${state.alreadyExists.patientId}`}
+            className="flex-1 rounded-full border border-ink-100 bg-white px-6 py-3 text-center text-sm font-medium text-ink-900 transition-colors hover:bg-surface-soft"
+          >
+            Ver ficha do paciente
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   if (state.success) {
     return (
       <div className="space-y-4">
