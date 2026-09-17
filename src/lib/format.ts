@@ -59,6 +59,14 @@ export function firstName(fullName: string): string {
   return words[0] ?? fullName;
 }
 
+export function formatCpf(digits: string): string {
+  const clean = digits.replace(/\D/g, "");
+  const parts = [clean.slice(0, 3), clean.slice(3, 6), clean.slice(6, 9)].filter(Boolean);
+  let formatted = parts.join(".");
+  if (clean.length > 9) formatted += `-${clean.slice(9, 11)}`;
+  return formatted;
+}
+
 export function formatDate(iso: string): string {
   // colunas "date" puras (sem hora) vêm como "YYYY-MM-DD" — o construtor
   // Date interpreta esse formato como meia-noite UTC, o que "puxa" a data

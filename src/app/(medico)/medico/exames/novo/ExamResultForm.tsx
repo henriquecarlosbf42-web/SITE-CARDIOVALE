@@ -2,42 +2,28 @@
 
 import { useActionState } from "react";
 import { DatePickerField } from "@/components/ui/date-picker";
+import type { PatientSearchResult } from "@/lib/data/doctor-portal";
 import { createExamResult, type ExamResultFormState } from "../actions";
 import { ExamFilesDropzone } from "./ExamFilesDropzone";
+import { PatientPicker } from "./PatientPicker";
 
 const initialState: ExamResultFormState = {};
 
 interface Props {
   patients: { id: string; full_name: string }[];
+  allPatients: PatientSearchResult[];
   exams: { id: string; name: string }[];
   defaultPatientId?: string;
 }
 
-export function ExamResultForm({ patients, exams, defaultPatientId }: Props) {
+export function ExamResultForm({ patients, allPatients, exams, defaultPatientId }: Props) {
   const [state, formAction, pending] = useActionState(createExamResult, initialState);
 
   return (
     <form action={formAction} className="space-y-5">
       <div>
-        <label htmlFor="patient_id" className="block text-sm font-medium text-ink-900">
-          Paciente
-        </label>
-        <select
-          id="patient_id"
-          name="patient_id"
-          required
-          defaultValue={defaultPatientId ?? ""}
-          className="mt-1.5 w-full rounded-lg border border-ink-100 px-4 py-2.5 text-sm text-ink-900 outline-none focus:border-brand"
-        >
-          <option value="" disabled>
-            Selecione...
-          </option>
-          {patients.map((patient) => (
-            <option key={patient.id} value={patient.id}>
-              {patient.full_name}
-            </option>
-          ))}
-        </select>
+        <label className="block text-sm font-medium text-ink-900">Paciente</label>
+        <PatientPicker myPatients={patients} allPatients={allPatients} defaultPatientId={defaultPatientId} />
       </div>
 
       <div>

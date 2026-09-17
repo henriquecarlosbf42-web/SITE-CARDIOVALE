@@ -64,6 +64,20 @@ export async function createPatientByDoctor(
     // já tem conta (feita por outro médico, pela recepção etc) — só
     // garante que esse médico também enxerga o paciente e deixa ele
     // decidir se quer ir direto pra ficha, em vez de travar num erro.
+    // Mas só se ainda não estiver vinculado a OUTRO médico — aí fica
+    // indisponível, igual à regra do "vincular" na busca.
+    const { data: otherAppt } = await admin
+      .from("appointments")
+      .select("id")
+      .eq("patient_id", existing.id)
+      .neq("doctor_id", doctorId)
+      .limit(1)
+      .maybeSingle();
+
+    if (otherAppt) {
+      return { error: "Esse CPF já tem cadastro, mas está vinculado a outro médico." };
+    }
+
     await admin.from("appointments").insert({
       patient_id: existing.id,
       doctor_id: doctorId,
@@ -122,4 +136,42 @@ export async function createPatientByDoctor(
   revalidatePath("/medico/pacientes");
 
   return { success: { cpf, password, patientId } };
+}
+
+/** Vincula um paciente já cadastrado (mas sem médico ainda) a esse
+ * médico — usado no botão "Vincular" da busca. Recusa se, entre a
+ * busca e o clique, outro médico já tiver vinculado esse paciente. */
+export async function linkPatientToDoctor(patientId: string): Promise<{ error?: string }> {
+  const doctorId = await requireDoctorSession();
+  if (!doctorId) return { error: "Sem permissão." };
+
+  let admin;
+  try {
+    admin = createAdminClient();
+  } catch {
+    return { error: "SUPABASE_SERVICE_ROLE_KEY não configurada no servidor — fala com o desenvolvedor." };
+  }
+
+  const { data: otherAppt } = await admin
+    .from("appointments")
+    .select("id")
+    .eq("patient_id", patientId)
+    .neq("doctor_id", doctorId)
+    .limit(1)
+    .maybeSingle();
+
+  if (otherAppt) return { error: "Esse paciente já está vinculado a outro médico." };
+
+  const { error } = await admin.from("appointments").insert({
+    patient_id: patientId,
+    doctor_id: doctorId,
+    type: "CONSULTA",
+    status_code: "ATENDIDA",
+    scheduled_at: new Date().toISOString(),
+  });
+  if (error) return { error: "Não deu pra vincular. Tenta de novo." };
+
+  revalidatePath("/medico/pacientes");
+  revalidatePath("/medico/exames/novo");
+  return {};
 }

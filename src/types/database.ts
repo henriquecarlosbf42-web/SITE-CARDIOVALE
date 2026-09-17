@@ -723,6 +723,10 @@ export interface Database {
         Args: { p_cpf: string };
         Returns: string | null;
       };
+      claimed_patient_ids: {
+        Args: Record<string, never>;
+        Returns: string[];
+      };
     };
     Enums: {
       appointment_type: "CONSULTA" | "RETORNO" | "EXAME";

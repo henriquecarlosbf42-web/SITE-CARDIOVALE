@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Plus } from "lucide-react";
-import { getDoctorPatients, getDoctorRecord } from "@/lib/data/doctor-portal";
+import { getDoctorPatients, getDoctorRecord, getPatientsForSearch } from "@/lib/data/doctor-portal";
 import { PatientsList } from "./PatientsList";
 
 export const metadata: Metadata = { title: "Pacientes | Portal do médico" };
@@ -10,15 +10,24 @@ export default async function PacientesPage() {
   const doctor = await getDoctorRecord();
   if (!doctor) return <p className="text-sm text-ink-600">Cadastro não vinculado ainda.</p>;
 
-  const patients = await getDoctorPatients(doctor.id);
+  const [patients, allPatients] = await Promise.all([
+    getDoctorPatients(doctor.id),
+    getPatientsForSearch(doctor.id),
+  ]);
 
   return (
     <div>
       <h1 className="text-center text-2xl font-semibold text-ink-900">Pacientes</h1>
-      <p className="mt-1 text-center text-sm text-ink-600">Só aparecem aqui pacientes com quem você já teve consulta.</p>
+      <p className="mt-1 text-center text-sm text-ink-600">
+        Pacientes com quem você já teve consulta. Use a busca pra encontrar e vincular pacientes da clínica ainda
+        sem médico.
+      </p>
 
       <div className="mt-6">
-        <PatientsList patients={patients.map((patient) => ({ id: patient.id, full_name: patient.full_name }))} />
+        <PatientsList
+          patients={patients.map((patient) => ({ id: patient.id, full_name: patient.full_name }))}
+          allPatients={allPatients}
+        />
       </div>
 
       <div className="mt-4 flex justify-center">

@@ -48,6 +48,34 @@ export async function getDoctorPatients(doctorId: string): Promise<Patient[]> {
   return data ?? [];
 }
 
+export interface PatientSearchResult {
+  id: string;
+  full_name: string;
+  cpf: string | null;
+  status: "mine" | "available" | "taken";
+}
+
+/** Todos os pacientes da clínica, pra busca — cada um marcado como
+ * "meu" (já vinculado a esse médico), "disponível" (sem médico ainda)
+ * ou "indisponível" (vinculado a outro médico). */
+export async function getPatientsForSearch(doctorId: string): Promise<PatientSearchResult[]> {
+  const supabase = await createClient();
+
+  const [{ data: patients }, { data: myAppointments }, { data: claimedIds }] = await Promise.all([
+    supabase.from("patients").select("id, full_name, cpf").order("full_name"),
+    supabase.from("appointments").select("patient_id").eq("doctor_id", doctorId),
+    supabase.rpc("claimed_patient_ids"),
+  ]);
+
+  const mine = new Set((myAppointments ?? []).map((a) => a.patient_id));
+  const claimed = new Set(claimedIds ?? []);
+
+  return (patients ?? []).map((patient) => ({
+    ...patient,
+    status: mine.has(patient.id) ? "mine" : claimed.has(patient.id) ? "taken" : "available",
+  }));
+}
+
 export async function getPatientById(patientId: string): Promise<Patient | null> {
   const supabase = await createClient();
   const { data } = await supabase.from("patients").select("*").eq("id", patientId).maybeSingle();

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getDoctorPatients, getDoctorRecord } from "@/lib/data/doctor-portal";
+import { getDoctorPatients, getDoctorRecord, getPatientsForSearch } from "@/lib/data/doctor-portal";
 import { createClient } from "@/lib/supabase/server";
 import { ExamResultForm } from "./ExamResultForm";
 
@@ -16,7 +16,10 @@ export default async function NovoResultadoPage({
 
   if (!doctor) return <p className="text-sm text-ink-600">Cadastro não vinculado ainda.</p>;
 
-  const patients = await getDoctorPatients(doctor.id);
+  const [patients, allPatients] = await Promise.all([
+    getDoctorPatients(doctor.id),
+    getPatientsForSearch(doctor.id),
+  ]);
 
   const supabase = await createClient();
   const { data: exams } = await supabase.from("exams").select("id, name").order("name");
@@ -29,7 +32,12 @@ export default async function NovoResultadoPage({
       </p>
 
       <div className="mt-6 rounded-card border border-ink-100 bg-surface p-6 shadow-soft">
-        <ExamResultForm patients={patients} exams={exams ?? []} defaultPatientId={paciente} />
+        <ExamResultForm
+          patients={patients}
+          allPatients={allPatients}
+          exams={exams ?? []}
+          defaultPatientId={paciente}
+        />
       </div>
 
       <p className="mt-4 text-center text-sm text-ink-600">
