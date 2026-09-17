@@ -70,7 +70,7 @@ export default function MedicosPage() {
                 >
                   <Button variant="secondary" className="w-full">
                     <MessageCircle className="h-4 w-4" strokeWidth={1.75} />
-                    Falar com a secretária
+                    Entrar em contato
                   </Button>
                 </a>
               </div>
