@@ -23,8 +23,8 @@ export async function notifyExamResultPublished(examResultId: string): Promise<v
     if (!patient?.user_id) return;
 
     const examName = exam?.name ?? "exame";
-    const title = "Resultado disponível";
-    const body = `Seu resultado de ${examName} já está disponível no portal.`;
+    const title = "Seu exame está disponível";
+    const body = `O resultado de ${examName} já está disponível no portal.`;
 
     await admin.from("notifications").insert({
       user_id: patient.user_id,

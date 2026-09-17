@@ -83,6 +83,11 @@ export default async function PortalDashboardPage() {
           ) : (
             <p className="mt-3 text-sm text-ink-600">Nenhuma notificação nova.</p>
           )}
+          {notifications.length > 0 && (
+            <Link href="/portal/notificacoes" className="mt-3 inline-block text-sm font-medium text-brand-deep hover:underline">
+              Ver todas →
+            </Link>
+          )}
           <EnableNotificationsButton />
         </div>
       </div>
