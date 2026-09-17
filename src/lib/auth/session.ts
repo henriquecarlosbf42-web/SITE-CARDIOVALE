@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import type { Role } from "@/lib/permissions/roles";
 
@@ -13,8 +14,12 @@ export interface CurrentUser {
  * Usuário autenticado + papel (tabela `users`). Retorna null se não
  * houver sessão ou se a linha em `users` ainda não existir (perfil
  * criado depois do primeiro login, ou por um admin).
+ *
+ * Layout e página chamam essa função na mesma requisição — cache()
+ * garante que as duas idas ao banco (auth + perfil) rodam uma vez só
+ * por requisição, em vez de duas.
  */
-export async function getCurrentUser(): Promise<CurrentUser | null> {
+export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
   const supabase = await createClient();
 
   const {
@@ -38,4 +43,4 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
     fullName: profile.full_name,
     mustChangePassword: profile.must_change_password,
   };
-}
+});
